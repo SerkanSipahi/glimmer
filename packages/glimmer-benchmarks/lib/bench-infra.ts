@@ -1,6 +1,8 @@
 import { BenchmarkReporter, BenchmarkEnvironment } from './bench';
 import Stats from './stats';
 
+import * as BenchmarkJs from "benchmark";
+
 export class TestReporter extends BenchmarkReporter {
   private pre: HTMLPreElement = document.createElement('pre');
   private cycle: HTMLPreElement = document.createElement('pre');
@@ -13,7 +15,7 @@ export class TestReporter extends BenchmarkReporter {
     document.body.appendChild(this.pre);
   }
 
-  progress(count: number, elapsed: number, stats: Benchmark.Stats) {
+  progress(count: number, elapsed: number, stats: BenchmarkJs.Stats) {
     let error = stats.rme.toFixed(2);
     this.cycle.innerHTML = `${count} samples in ${toHumanTime(elapsed)} (${toHumanTime(stats.mean)} ± ${error}%)`;
   }
@@ -23,7 +25,7 @@ export class TestReporter extends BenchmarkReporter {
     this.cycle.innerHTML = "Errored";
   }
 
-  complete(benchmark: Benchmark, event: Benchmark.Event) {
+  complete(benchmark: BenchmarkJs, event: BenchmarkJs.Event) {
     let rawStats = benchmark.stats;
     if (rawStats.sample.length === 0) return;
     let stats = new Stats({ bucket_precision: rawStats.moe });

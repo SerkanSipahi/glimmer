@@ -5,9 +5,13 @@
 // 2. unit test the examples to make sure they actually work before benchmarking
 // 3. clean up the UI of the report (post-MVP)
 
-import { dict } from '@glimmer/util';
+import { dict } from "@glimmer/util";
 
-Benchmark.support.decompilation = false;
+// import types only declare as global
+import * as BenchmarkJs from "benchmark";
+declare const Benchmark: typeof BenchmarkJs;
+
+Benchmark["support"].decompilation = false;
 
 export abstract class BenchmarkScenario {
   protected moe: number;
@@ -23,7 +27,7 @@ export abstract class BenchmarkScenario {
   start() {
   }
 
-  tick(target: Benchmark, event?: Benchmark.Event) {
+  tick(target: BenchmarkJs, event?: BenchmarkJs.Event) {
     let { stats, times } = target;
 
     this.moe = target.stats.moe;
@@ -35,8 +39,8 @@ export abstract class BenchmarkScenario {
     this.reporter.error(error);
   }
 
-  complete(event: Benchmark.Event) {
-    this.reporter.complete(event.target as Benchmark, event);
+  complete(event: BenchmarkJs.Event) {
+    this.reporter.complete(event.target as BenchmarkJs, event);
   }
 
   abstract name: string;
@@ -50,15 +54,15 @@ export abstract class BenchmarkEnvironment {
 }
 
 export abstract class BenchmarkReporter {
-  abstract progress(count: number, elapsed: number, stats: Benchmark.Stats);
+  abstract progress(count: number, elapsed: number, stats: BenchmarkJs.Stats);
   abstract error(error: Error);
-  abstract complete(benchmark: Benchmark, event: Benchmark.Event);
+  abstract complete(benchmark: BenchmarkJs, event: BenchmarkJs.Event);
 }
 
 export class BenchmarkSuite {
   public scenarios: {
-    [name: string]: Benchmark;
-  } = dict<Benchmark>();
+    [name: string]: BenchmarkJs;
+  } = dict<BenchmarkJs>();
 
   add(scenario: BenchmarkScenario) {
     let bench = new Benchmark({
@@ -66,9 +70,9 @@ export class BenchmarkSuite {
       name: scenario.name,
       fn: scenario.run.bind(scenario),
       onStart: scenario.start.bind(scenario),
-      onCycle(event: Benchmark.Event) {
-        if ((event.target as Benchmark).aborted) return;
-        scenario.tick(event.target as Benchmark, event);
+      onCycle(event: BenchmarkJs.Event) {
+        if ((event.target as BenchmarkJs).aborted) return;
+        scenario.tick(event.target as BenchmarkJs, event);
       },
       onError: (error: any) => {
         scenario.error(error.message);
