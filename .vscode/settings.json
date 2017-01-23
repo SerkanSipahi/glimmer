@@ -1,18 +1,22 @@
 // Place your settings in this file to overwrite default and user settings.
 {
   "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.eol": "\n",
   "search.exclude": {
     "**/node_modules": true,
-    "tmp": true
+    "**/bower_components": true
   },
   "files.exclude": {
-    "**/.git": true,
+    ".git": true,
     "**/.DS_Store": true,
-    "**/node_modules": true,
     "**/dist": true,
-    "bower_components": true,
-    "dist": true,
     "tmp": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/tmp/**": true
   },
   "files.trimTrailingWhitespace": true,
   "editor.renderWhitespace": "boundary",
